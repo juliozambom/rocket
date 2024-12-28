@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const jsonfile = require('jsonfile');
+const dayjs = require('dayjs')
 require('dotenv').config();
 
 let collectedCoins = 0;
@@ -59,7 +60,22 @@ async function revalidateToken({ page, isTheFirstTime }) {
   return tokenToReturn;
 }
 
-async function collectBonus(token) {
+async function scheduleNextCollect(page) {
+  console.log("Agendada nova coleta de moedas para: " + dayjs().add(30, 'minute').format('DD/MM/YYYY - HH:mm:ss'))
+  setTimeout(async () => {
+    await collectBonus(token, page)
+    try {
+      await revalidateToken({
+        page,
+        isTheFirstTime: false
+      });
+    } catch (error) {
+      console.log("Error revalidating token: " + error)
+    }
+  }, 30 * 60 * 1000)
+}
+
+async function collectBonus(token, page) {
   console.log("Coletando recompensa")
 
    const response = await fetch("https://dev-nakama.winterpixel.io/v2/rpc/collect_timed_bonus", {
@@ -83,6 +99,8 @@ async function collectBonus(token) {
   } else {
     collectedCoins += 100;
     console.log(`Recompensa coletada, moedas capturadas ao todo ${collectedCoins}`)
+    scheduleNextCollect(page)
+    
   }
 }
 
@@ -117,17 +135,5 @@ async function collectBonus(token) {
     page,
     isTheFirstTime: true
   });
-  await collectBonus(firstToken)
-
-  setInterval(async () => {
-    await collectBonus(token)
-    try {
-      await revalidateToken({
-        page,
-        isTheFirstTime: false
-      });
-    } catch (error) {
-      console.log("Error revalidating token: " + error)
-    }
-  }, 60 * 30 * 1000) // 30 minutes interval
+  await collectBonus(firstToken, page)
 })()

@@ -3,6 +3,7 @@
     "start": "node ./src/index.js"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "jsonfile": "^6.1.0",
     "puppeteer": "^23.11.1"
