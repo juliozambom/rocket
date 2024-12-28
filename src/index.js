@@ -105,7 +105,15 @@ async function collectBonus(token, page) {
 }
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: [
+      '--no-sandbox',
+      '--use-gl=desktop',
+      '--enable-webgl',
+      '--ignore-gpu-blocklist'
+    ]
+  });
   const page = await browser.newPage();
 
   await page.goto('https://discord.com/login');
