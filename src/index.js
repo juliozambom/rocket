@@ -11,6 +11,7 @@ const DISCORD_PASSWORD = process.env.DISCORD_PASSWORD
 async function revalidateToken({ page, isTheFirstTime }) {
   if (!isTheFirstTime) {
     const exitRocketBotButton = await page.$("[aria-label='Sair da atividade']");
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     await exitRocketBotButton.click()
   
     await new Promise((resolve) => setTimeout(resolve, 800))
