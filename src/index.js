@@ -24,7 +24,7 @@ async function revalidateToken({ page, isTheFirstTime }) {
     path: './tracing.json',
   })
 
-  const timeout = isTheFirstTime ? 20000 : 15000; // Timeout higher if is the first time due to the manually tutorial
+  const timeout = 30000;
 
   await new Promise(resolve => setTimeout(resolve, timeout));
 
@@ -119,10 +119,14 @@ async function collectBonus(token) {
   await collectBonus(firstToken)
 
   setInterval(async () => {
-     await revalidateToken({
-      page,
-      isTheFirstTime: false
-    });
     await collectBonus(token)
+    try {
+      await revalidateToken({
+        page,
+        isTheFirstTime: false
+      });
+    } catch (error) {
+      console.log("Error revalidating token: " + error)
+    }
   }, 60 * 30 * 1000) // 30 minutes interval
 })()
