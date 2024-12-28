@@ -10,6 +10,8 @@ Then, you should install the project dependencies using, some of the following c
 `yarn`
 `pnpm install`
 
+Create a .env file in the root of the project, and fill the vars available in .env.example
+
 Now you need to run the script
 
 `npm run start`
